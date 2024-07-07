@@ -26,8 +26,10 @@
 		"@types/morgan": "^1.9.9",
 		"@types/helmet": "^4.0.0",
 		"@types/cors": "^2.8.17",
+		"@types/chance": "^1.1.6",
 		"typescript": "^5.5.3",
 		"ts-node": "^10.9.2",
-		"tsx": "^4.16.2"
+		"tsx": "^4.16.2",
+		"chance": "^1.1.11"
 	}
 }

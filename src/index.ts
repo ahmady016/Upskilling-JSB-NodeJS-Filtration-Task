@@ -1,3 +1,4 @@
+import fs from 'fs'
 import express, { Application, Response } from 'express'
 
 import * as dotenv from 'dotenv'
@@ -6,11 +7,17 @@ import helmet from 'helmet'
 import cors from 'cors'
 import path from 'path'
 
+import generateFakeData from './db/fakeDB/seed'
 import registerApiRoutes from './routes'
 import errorHandlerMiddleware from './errorHandlerMiddleware'
 
 // setting Environment Variables
 dotenv.config()
+
+// generate and write fake data
+if(!fs.existsSync('./src/db/fakeDB/db.json')) {
+    fs.writeFileSync('./src/db/fakeDB/db.json', JSON.stringify(generateFakeData(), null, 2))
+}
 
 // initializing the express app
 const app: Application = express()
