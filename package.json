@@ -1,0 +1,33 @@
+{
+	"name": "upskilling-jsb-nodejs-filtration-task",
+	"version": "1.0.0",
+	"main": "index.js",
+	"keywords": ["upskilling", "jsb", "nodejs", "filtration", "task"],
+	"author": "Ahmed Hamdy",
+	"license": "ISC",
+	"description": "This task not related to any real project it just for test your skills to be able to help you in our 'JSB' program",
+	"scripts": {
+		"prebuild": "rm -rf ./dist",
+		"build": "tsc",
+		"start": "npm run build && node ./dist/index.js",
+		"dev": "tsx watch ./src/index.ts"
+	},
+	"dependencies": {
+		"express": "^4.19.2",
+		"dotenv": "^16.4.5",
+		"morgan": "^1.10.0",
+		"helmet": "^7.1.0",
+		"cors": "^2.8.5"
+	},
+	"devDependencies": {
+		"@types/node": "^20.14.10",
+		"@types/express": "^4.17.21",
+		"@types/dotenv": "^8.2.0",
+		"@types/morgan": "^1.9.9",
+		"@types/helmet": "^4.0.0",
+		"@types/cors": "^2.8.17",
+		"typescript": "^5.5.3",
+		"ts-node": "^10.9.2",
+		"tsx": "^4.16.2"
+	}
+}

@@ -1,0 +1,30 @@
+{
+	"compilerOptions": {
+		/* Basic */
+		"target": "ESNext",
+
+		/* Modules */
+		"moduleResolution": "node",
+		"module": "commonjs",
+		"rootDir": "./src",
+		"outDir": "./dist",
+
+		/* Emit */
+		"pretty": true,
+		"sourceMap": true,
+		"esModuleInterop": true,
+		"forceConsistentCasingInFileNames": true,
+
+		/* Type Checking */
+		"strict": true,
+		"noImplicitAny": true,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+
+		/* Completeness */
+		"skipLibCheck": true
+	},
+
+	"include": ["src/*.ts", "src/*.json", ".env"],
+	"exclude": ["node_modules"]
+}
