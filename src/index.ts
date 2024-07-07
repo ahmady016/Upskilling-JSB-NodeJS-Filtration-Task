@@ -7,6 +7,7 @@ import cors from 'cors'
 import path from 'path'
 
 import registerApiRoutes from './routes'
+import errorHandlerMiddleware from './errorHandlerMiddleware'
 
 // setting Environment Variables
 dotenv.config()
@@ -27,6 +28,9 @@ registerApiRoutes(app)
 
 // catch all routes (other than api routes) and return the index file
 app.get('*', (_, res: Response) => res.sendFile(path.join(`${__dirname}/public/index.html`)))
+
+// Error handling
+app.use(errorHandlerMiddleware)
 
 // start the web server
 const PORT = process.env.PORT || 3000
