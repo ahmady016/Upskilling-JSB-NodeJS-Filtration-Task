@@ -2,6 +2,13 @@
 	"compilerOptions": {
 		/* Basic */
 		"target": "ESNext",
+		"declaration": true,
+		"removeComments": true,
+		"emitDecoratorMetadata": true,
+		"experimentalDecorators": true,
+		"strictPropertyInitialization": false,
+		"allowSyntheticDefaultImports": true,
+		"resolveJsonModule": true,
 
 		/* Modules */
 		"moduleResolution": "node",
@@ -14,6 +21,7 @@
 		"sourceMap": true,
 		"esModuleInterop": true,
 		"forceConsistentCasingInFileNames": true,
+		"noFallthroughCasesInSwitch": false,
 
 		/* Type Checking */
 		"strict": true,
@@ -22,9 +30,10 @@
 		"noUnusedParameters": true,
 
 		/* Completeness */
-		"skipLibCheck": true
+		"skipLibCheck": true,
+		"strictNullChecks": false,
 	},
 
-	"include": ["src/*.ts", "src/*.json", ".env"],
+	"include": ["src/**/*.ts", "src/**/*.json", ".env"],
 	"exclude": ["node_modules"]
 }
