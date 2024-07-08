@@ -1,12 +1,11 @@
 
-export type Team = {
-    id: string
-    name: string
-    description: string
-    createdAt: string
-    updatedAt: string
+export class Team {
+    id: string = ''
+    name: string = ''
+    description: string = ''
+    createdAt: string = ''
+    updatedAt: string = ''
 }
-
 export type Gender = 'MALE' | 'FEMALE'
 export type TeamMember = {
     id: string

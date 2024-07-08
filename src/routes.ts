@@ -1,7 +1,6 @@
-import { Application, Response } from 'express'
+import { Application } from 'express'
+import teamsRouter from './teams/router'
 
 export default function registerApiRoutes(app: Application) {
-	app.use('/api', (_, res: Response) => {
-		res.send('Hello There, The Web Server is Running')
-	})
+	app.use('/api/teams', teamsRouter)
 }
