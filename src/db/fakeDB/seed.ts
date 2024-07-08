@@ -1,3 +1,4 @@
+import fs from 'fs'
 import chance from 'chance'
 
 import { Team, TeamMember, Task, Gender, TaskStatus } from './../types'
@@ -56,10 +57,10 @@ function generateStartDateAndEndDateAndDueDate() {
     return { startDate: startDate.toISOString(), endDate: endDate.toISOString(), dueDate: dueDate.toISOString() }
 }
 
-const TEAMS_LENGTH = 10
-const TEAM_MEMBERS_LENGTH = 100
-const TASKS_LENGTH = 3000
-export default function generateFakeData() {
+const TEAMS_LENGTH = 5
+const TEAM_MEMBERS_LENGTH = 25
+const TASKS_LENGTH = 100
+function generateFakeData() {
 	// generate and fill teams
 	for (let i = 0; i < TEAMS_LENGTH; i++) {
         const createdAtAndUpdatedAtValues = generateCreatedAtAndUpdatedAt()
@@ -110,4 +111,14 @@ export default function generateFakeData() {
 	}
 
 	return db
+}
+
+export function seedFakeDb() {
+	if(process.env.SEED_DB === 'true' || !fs.existsSync('./src/db/fakeDB/db.json')) {
+		console.log('Seeding Fake DB ...')
+		fs.writeFileSync('./src/db/fakeDB/db.json', JSON.stringify(generateFakeData(), null, 2), { encoding:'utf8' })
+	}
+}
+export function writeFakeDb(db: unknown) {
+	fs.writeFileSync('./src/db/fakeDB/db.json', JSON.stringify(db, null, 2), { encoding:'utf8', flag:'w' })
 }

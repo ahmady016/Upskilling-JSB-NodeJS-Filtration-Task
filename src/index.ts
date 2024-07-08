@@ -1,23 +1,19 @@
-import fs from 'fs'
-import express, { Application, Response } from 'express'
+import express, { Application } from 'express'
 
 import * as dotenv from 'dotenv'
 import morgan from 'morgan'
 import helmet from 'helmet'
 import cors from 'cors'
-import path from 'path'
 
-import generateFakeData from './db/fakeDB/seed'
+import { seedFakeDb } from './db/fakeDB/seed'
 import registerApiRoutes from './routes'
 import errorHandlerMiddleware from './errorHandlerMiddleware'
 
 // setting Environment Variables
 dotenv.config()
 
-// generate and write fake data
-if(!fs.existsSync('./src/db/fakeDB/db.json')) {
-    fs.writeFileSync('./src/db/fakeDB/db.json', JSON.stringify(generateFakeData(), null, 2))
-}
+// generate and write fake data for the first time
+seedFakeDb()
 
 // initializing the express app
 const app: Application = express()
@@ -33,11 +29,11 @@ app.use(express.static('public'))
 // register all api routes
 registerApiRoutes(app)
 
-// catch all routes (other than api routes) and return the index file
-app.get('*', (_, res: Response) => res.sendFile(path.join(`${__dirname}/public/index.html`)))
-
 // Error handling
 app.use(errorHandlerMiddleware)
+
+// catch all routes (other than api routes) and return the index file
+// app.get('*', (_, res: Response) => res.sendFile(path.join(`${__dirname}/public/index.html`)))
 
 // start the web server
 const PORT = process.env.PORT || 3000
