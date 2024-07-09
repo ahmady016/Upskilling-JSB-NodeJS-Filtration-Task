@@ -4,13 +4,14 @@ import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
 
 import db from '../db/fakeDB/db.json'
+import { TeamMember } from '../db/types'
 import { writeFakeDb } from '../db/fakeDB/seed'
 import { ApiError } from '../errorHandlerMiddleware'
 import { CreateOrUpdateTeamMemberInput } from './createMember.endpoint'
 
 async function updateMemberEndpointHandler(
     req: Request<{ id: string }, unknown, CreateOrUpdateTeamMemberInput>,
-    res: Response
+    res: Response<TeamMember>
 ) {
     // transform input to class and validate
     const updatedTeamMemberInput = plainToInstance(CreateOrUpdateTeamMemberInput, req.body)
@@ -41,7 +42,7 @@ async function updateMemberEndpointHandler(
     writeFakeDb(db)
 
     // return updated team member
-    res.json(foundTeamMember)
+    res.json(plainToInstance(TeamMember, foundTeamMember))
 }
 
 export default asyncHandler(updateMemberEndpointHandler)
