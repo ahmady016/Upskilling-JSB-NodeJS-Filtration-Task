@@ -1,15 +1,15 @@
 import { Router } from 'express'
 
-import findAllEndpointHandler from './findAll.endpoint'
-import findOneEndpointHandler from './findOne.endpoint'
+import findAllTeamsEndpointHandler from './findAllTeams.endpoint'
+import findOneTeamEndpointHandler from './findOneTeam.endpoint'
 import createTeamEndpointHandler from './createTeam.endpoint'
 import updateTeamEndpointHandler from './updateTeam.endpoint'
 import deleteTeamEndpointHandler from './deleteTeam.endpoint'
 
 const teamsRouter = Router()
 
-teamsRouter.get('/list', findAllEndpointHandler)
-teamsRouter.get('/:id', findOneEndpointHandler)
+teamsRouter.get('/list', findAllTeamsEndpointHandler)
+teamsRouter.get('/:id', findOneTeamEndpointHandler)
 teamsRouter.post('/create', createTeamEndpointHandler)
 teamsRouter.put('/:id', updateTeamEndpointHandler)
 teamsRouter.delete('/:id', deleteTeamEndpointHandler)

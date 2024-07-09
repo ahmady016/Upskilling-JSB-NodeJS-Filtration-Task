@@ -1,4 +1,5 @@
 import { Request, Response } from 'express'
+import asyncHandler from 'express-async-handler'
 import { plainToInstance } from 'class-transformer'
 import { IsNotEmpty, IsOptional, Length, validate } from 'class-validator'
 
@@ -17,7 +18,7 @@ class UpdateTeamInput {
     description: string
 }
 
-export default async function updateTeamEndpointHandler(
+async function updateTeamEndpointHandler(
     req: Request<{ id: string }, unknown, UpdateTeamInput>,
     res: Response<Team>
 ) {
@@ -48,3 +49,5 @@ export default async function updateTeamEndpointHandler(
     // return updated team
     res.json(foundTeam)
 }
+
+export default asyncHandler(updateTeamEndpointHandler)

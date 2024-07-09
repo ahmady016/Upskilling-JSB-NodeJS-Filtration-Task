@@ -7,8 +7,8 @@ import db from '../db/fakeDB/db.json'
 import { Team } from './../db/types'
 import { ApiError } from '../errorHandlerMiddleware'
 
-import Chance from 'chance'
 import { writeFakeDb } from '../db/fakeDB/seed'
+import Chance from 'chance'
 const ch = new Chance()
 
 class CreateTeamInput {

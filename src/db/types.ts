@@ -1,13 +1,16 @@
 
 export class Team {
-    id: string = ''
-    name: string = ''
-    description: string = ''
-    createdAt: string = ''
-    updatedAt: string = ''
+    id: string
+    name: string
+    description: string
+    createdAt: string
+    updatedAt: string
 }
-export type Gender = 'MALE' | 'FEMALE'
-export type TeamMember = {
+export enum Gender {
+    MALE = 'MALE',
+    FEMALE = 'FEMALE'
+}
+export class TeamMember {
     id: string
     name: string
     email: string
@@ -18,8 +21,12 @@ export type TeamMember = {
     updatedAt: string
 }
 
-export type TaskStatus = 'OPEN' | 'IN_PROGRESS' | 'DONE'
-export type Task = {
+export enum TaskStatus {
+    OPEN = 'OPEN',
+    IN_PROGRESS = 'IN_PROGRESS',
+    DONE = 'DONE'
+}
+export class Task {
     id: string
     title: string
     description: string

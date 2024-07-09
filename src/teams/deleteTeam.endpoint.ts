@@ -2,6 +2,7 @@ import { Request, Response } from 'express'
 
 import db from '../db/fakeDB/db.json'
 import { writeFakeDb } from '../db/fakeDB/seed'
+import { ApiError } from '../errorHandlerMiddleware'
 
 export default function deleteTeamEndpointHandler(
     req: Request<{ id: string }>,
@@ -12,7 +13,7 @@ export default function deleteTeamEndpointHandler(
     const foundTeam = db.teams.find((team) => team.id === teamId)
     // Check if team exists and throw error if not
     if (!foundTeam) {
-        throw new Error(`Team with Id ${teamId} not found`)
+        throw new ApiError(`Team with Id ${teamId} not found`, 404)
     }
 
     // Delete team
