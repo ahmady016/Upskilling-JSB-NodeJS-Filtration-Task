@@ -1,27 +1,28 @@
 import { Request, Response } from 'express'
+import asyncHandler from 'express-async-handler'
 
-import db from '../db/fakeDB/db.json'
-import { writeFakeDb } from '../db/fakeDB/seed'
 import { ApiError } from '../errorHandlerMiddleware'
 
-export default function deleteMemberEndpointHandler(
+import { PrismaClient } from '@prisma/client'
+const prisma = new PrismaClient()
+
+async function deleteMemberEndpointHandler(
     req: Request<{ id: string }>,
     res: Response<string>
 ) {
-    const teamMemberId = req.params.id
     // Find team member
-    const foundTeamMember = db.teamMembers.find((team) => team.id === teamMemberId)
-    // Check if team exists and throw error if not
-    if (!foundTeamMember) {
-        throw new ApiError(`Team Member with Id ${teamMemberId} not found`, 404)
+    const teamMemberId = req.params.id
+    // find team member using prisma and check if it exists and throw error if not
+    const foundMember = await prisma.teamMember.findUnique({ where: { id: teamMemberId } })
+    if(!foundMember) {
+        throw new ApiError(`TeamMember with Id ${teamMemberId} not found`, 404)
     }
 
     // Delete team
-    db.teamMembers = db.teamMembers.filter((team) => team.id !== teamMemberId)
-
-    // save to fakeDB
-    writeFakeDb(db)
+    const deletedTeamMember = await prisma.teamMember.delete({ where: { id: teamMemberId } })
 
     // return success message
-    res.json(`Team with id ${teamMemberId} deleted successfully`)
+    res.json(`Team with id ${deletedTeamMember.id} deleted successfully`)
 }
+
+export default asyncHandler(deleteMemberEndpointHandler)

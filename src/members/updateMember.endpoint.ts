@@ -3,11 +3,11 @@ import asyncHandler from 'express-async-handler'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
 
-import db from '../db/fakeDB/db.json'
-import { TeamMember } from '../db/types'
-import { writeFakeDb } from '../db/fakeDB/seed'
 import { ApiError } from '../errorHandlerMiddleware'
 import { CreateOrUpdateTeamMemberInput } from './createMember.endpoint'
+
+import { PrismaClient, TeamMember } from '@prisma/client'
+const prisma = new PrismaClient()
 
 async function updateMemberEndpointHandler(
     req: Request<{ id: string }, unknown, CreateOrUpdateTeamMemberInput>,
@@ -23,26 +23,20 @@ async function updateMemberEndpointHandler(
 
     // Find team member
     const teamMemberId = req.params.id
-    const foundTeamMember = db.teamMembers.find((teamMember) => teamMember.id === teamMemberId)
-    // Check if team exists and throw error if not
-    if(!foundTeamMember) {
+    // find team member using prisma and check if it exists and throw error if not
+    const foundMember = await prisma.teamMember.findUnique({ where: { id: teamMemberId } })
+    if(!foundMember) {
         throw new ApiError(`TeamMember with Id ${teamMemberId} not found`, 404)
     }
 
-    // Update team member
-    foundTeamMember.id = teamMemberId
-    foundTeamMember.name = updatedTeamMemberInput.name
-    foundTeamMember.email = updatedTeamMemberInput.email
-    foundTeamMember.birthDate = updatedTeamMemberInput.birthDate
-    foundTeamMember.gender = updatedTeamMemberInput.gender
-    foundTeamMember.teamId = updatedTeamMemberInput.teamId
-    foundTeamMember.updatedAt = new Date().toISOString()
-
-    // save to fakeDB
-    writeFakeDb(db)
+    // Update team member using prisma
+    const updatedTeamMember = await prisma.teamMember.update({
+        where: { id: teamMemberId },
+        data: updatedTeamMemberInput
+    })
 
     // return updated team member
-    res.json(plainToInstance(TeamMember, foundTeamMember))
+    res.json(updatedTeamMember)
 }
 
 export default asyncHandler(updateMemberEndpointHandler)
