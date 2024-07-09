@@ -3,11 +3,11 @@ import asyncHandler from 'express-async-handler'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
 
-import db from '../db/fakeDB/db.json'
-import { Task } from '../db/types'
-import { writeFakeDb } from '../db/fakeDB/seed'
 import { ApiError } from '../errorHandlerMiddleware'
 import { CreateOrUpdateTaskInput } from './createTask.endpoint'
+
+import { PrismaClient, Task } from '@prisma/client'
+const prisma = new PrismaClient()
 
 async function updateMemberEndpointHandler(
     req: Request<{ id: string }, unknown, CreateOrUpdateTaskInput>,
@@ -21,30 +21,22 @@ async function updateMemberEndpointHandler(
         throw new ApiError('Validation Failed', 400, errors)
     }
 
-    // Find team member
+    // Find task
     const taskId = req.params.id
-    const foundTask = db.tasks.find((task) => task.id === taskId)
-    // Check if team exists and throw error if not
+    const foundTask = await prisma.task.findUnique({ where: { id: taskId } })
+    // Check if task exists and throw error if not
     if(!foundTask) {
         throw new ApiError(`Task with Id ${taskId} not found`, 404)
     }
 
-    // Update team member
-    foundTask.id = taskId
-    foundTask.title = updatedTaskInput.title
-    foundTask.description = updatedTaskInput.description
-    foundTask.status = updatedTaskInput.status
-    foundTask.dueDate = updatedTaskInput.dueDate
-    foundTask.startDate = updatedTaskInput.startDate
-    foundTask.endDate = updatedTaskInput.endDate
-    foundTask.assignedTo = updatedTaskInput.assignedTo
-    foundTask.updatedAt = new Date().toISOString()
-
-    // save to fakeDB
-    writeFakeDb(db)
+    // Update task using prisma
+    const updatedTask = await prisma.task.update({
+        where: { id: taskId },
+        data: updatedTaskInput
+    })
 
     // return updated team member
-    res.json(plainToInstance(Task, foundTask))
+    res.json(updatedTask)
 }
 
 export default asyncHandler(updateMemberEndpointHandler)

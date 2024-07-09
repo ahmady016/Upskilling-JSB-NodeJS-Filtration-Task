@@ -3,13 +3,11 @@ import { plainToInstance } from 'class-transformer'
 import { IsDateString, IsEnum, IsNotEmpty, IsOptional, Length, validate } from 'class-validator'
 import asyncHandler from 'express-async-handler'
 
-import db from '../db/fakeDB/db.json'
-import { Task, TaskStatus } from './../db/types'
+import { TaskStatus } from './../db/types'
 import { ApiError } from '../errorHandlerMiddleware'
 
-import { writeFakeDb } from '../db/fakeDB/seed'
-import Chance from 'chance'
-const ch = new Chance()
+import { PrismaClient, Task } from '@prisma/client'
+const prisma = new PrismaClient()
 
 export class CreateOrUpdateTaskInput {
     @IsNotEmpty({ message: 'Title is required' })
@@ -52,17 +50,8 @@ async function createTaskEndpointHandler(
         throw new ApiError('Validation failed', 400, errors)
     }
 
-    // transform createdTaskInput to Task and Add to database
-    const createdTask = plainToInstance(Task, {
-        id: ch.guid(),
-        ...createdTaskInput,
-        createdAt: new Date().toISOString(),
-        updatedAt: '',
-    })
-    db.tasks.push(createdTask)
-
-    // save to fakeDB
-    writeFakeDb(db)
+    // Add to database using prisma
+    const createdTask = await prisma.task.create({ data: createdTaskInput })
 
     // return created Task
     res.json(createdTask)

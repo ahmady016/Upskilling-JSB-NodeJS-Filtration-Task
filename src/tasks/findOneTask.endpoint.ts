@@ -1,22 +1,27 @@
 import { Request, Response } from 'express'
-import { plainToInstance } from 'class-transformer'
+import asyncHandler from 'express-async-handler'
 
-import db from '../db/fakeDB/db.json'
-import { Task } from '../db/types'
 import { ApiError } from '../errorHandlerMiddleware'
+
+import { PrismaClient, Task } from '@prisma/client'
+const prisma = new PrismaClient()
 
 type FindOneTaskQuery = {
 	id: string
 }
-export default function findOneTaskEndpointHandler(
+async function findOneTaskEndpointHandler(
 	req: Request<FindOneTaskQuery>,
 	res: Response<Task>
 ) {
-	const taskId = req.params.id
-	const foundTask = db.tasks.find((task) => task.id === taskId)
-	if(!foundTask) {
-		throw new ApiError(`Task with Id ${taskId} not found`, 404)
-	}
-	const task = plainToInstance(Task, foundTask)
-	res.json(task)
+    // Find task
+    const taskId = req.params.id
+    const foundTask = await prisma.task.findUnique({ where: { id: taskId } })
+    // Check if task exists and throw error if not
+    if(!foundTask) {
+        throw new ApiError(`Task with Id ${taskId} not found`, 404)
+    }
+	// return found task
+	res.json(foundTask)
 }
+
+export default asyncHandler(findOneTaskEndpointHandler)

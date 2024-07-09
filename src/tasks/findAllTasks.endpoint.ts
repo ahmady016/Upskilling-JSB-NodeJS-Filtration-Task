@@ -1,11 +1,15 @@
 import { Request, Response } from 'express'
+import asyncHandler from 'express-async-handler'
 
-import db from '../db/fakeDB/db.json'
-import { Task } from '../db/types'
+import { PrismaClient, Task } from '@prisma/client'
+const prisma = new PrismaClient()
 
-export default function findAllTasksEndpointHandler(
+async function findAllTasksEndpointHandler(
 	_: Request,
 	res: Response<Task[]>
 ) {
-	res.json(db.tasks as Task[])
+	const tasks = await prisma.task.findMany()
+	res.json(tasks)
 }
+
+export default asyncHandler(findAllTasksEndpointHandler)
