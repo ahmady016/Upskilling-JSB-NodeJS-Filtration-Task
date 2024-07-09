@@ -20,7 +20,8 @@
 		"cors": "^2.8.5",
 		"class-transformer": "^0.5.1",
 		"class-validator": "^0.14.1",
-		"express-async-handler": "^1.2.0"
+		"express-async-handler": "^1.2.0",
+		"@prisma/client": "^5.16.2"
 	},
 	"devDependencies": {
 		"@types/node": "^20.14.10",
@@ -33,6 +34,7 @@
 		"typescript": "^5.5.3",
 		"ts-node": "^10.9.2",
 		"tsx": "^4.16.2",
-		"chance": "^1.1.11"
+		"chance": "^1.1.11",
+		"prisma": "^5.16.2"
 	}
 }
