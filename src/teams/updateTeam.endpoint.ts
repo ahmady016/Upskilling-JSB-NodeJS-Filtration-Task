@@ -3,10 +3,10 @@ import asyncHandler from 'express-async-handler'
 import { plainToInstance } from 'class-transformer'
 import { IsNotEmpty, IsOptional, Length, validate } from 'class-validator'
 
-import db from '../db/fakeDB/db.json'
-import { Team } from './../db/types'
-import { writeFakeDb } from '../db/fakeDB/seed'
 import { ApiError } from '../errorHandlerMiddleware'
+
+import { PrismaClient, Team } from '@prisma/client'
+const prisma = new PrismaClient()
 
 class UpdateTeamInput {
     @IsNotEmpty({ message: 'Name is required' })
@@ -32,22 +32,20 @@ async function updateTeamEndpointHandler(
 
     // Find team
     const teamId = req.params.id
-    const foundTeam = db.teams.find((team) => team.id === teamId)
+    const foundTeam = await prisma.team.findUnique({ where: { id: teamId } })
     // Check if team exists and throw error if not
     if(!foundTeam) {
         throw new ApiError(`Team with Id ${teamId} not found`, 404)
     }
 
-    // Update team
-    foundTeam.name = updatedTeamInput.name
-    foundTeam.description = updatedTeamInput.description
-    foundTeam.updatedAt = new Date().toISOString()
-
-    // save to fakeDB
-    writeFakeDb(db)
+    // Update team using prisma
+    const updatedTeam = await prisma.team.update({
+        where: { id: teamId },
+        data: updatedTeamInput
+    })
 
     // return updated team
-    res.json(foundTeam)
+    res.json(updatedTeam)
 }
 
 export default asyncHandler(updateTeamEndpointHandler)

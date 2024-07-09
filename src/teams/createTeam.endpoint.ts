@@ -3,13 +3,10 @@ import { plainToInstance } from 'class-transformer'
 import { IsNotEmpty, IsOptional, Length, validate } from 'class-validator'
 import asyncHandler from 'express-async-handler'
 
-import db from '../db/fakeDB/db.json'
-import { Team } from './../db/types'
 import { ApiError } from '../errorHandlerMiddleware'
 
-import { writeFakeDb } from '../db/fakeDB/seed'
-import Chance from 'chance'
-const ch = new Chance()
+import { PrismaClient, Team } from '@prisma/client'
+const prisma = new PrismaClient()
 
 class CreateTeamInput {
     @IsNotEmpty({ message: 'Name is required' })
@@ -32,20 +29,11 @@ async function createTeamEndpointHandler(
         throw new ApiError('Validation failed', 400, errors)
     }
 
-    // transform createdTeamInput to Team and Add to database
-    const createdTeam = plainToInstance(Team, {
-        id: ch.guid(),
-        ...createdTeamInput,
-        createdAt: new Date().toISOString(),
-        updatedAt: '',
-    })
-    db.teams.push(createdTeam)
-
-    // save to fakeDB
-    writeFakeDb(db)
+    // Add to database using prisma
+    const team = await prisma.team.create({ data: createdTeamInput })
 
     // return created team
-    res.json(createdTeam)
+    res.json(team)
 }
 
 export default asyncHandler(createTeamEndpointHandler)

@@ -1,22 +1,25 @@
 import { Request, Response } from 'express'
-import { plainToInstance } from 'class-transformer'
+import asyncHandler from 'express-async-handler'
 
-import db from '../db/fakeDB/db.json'
-import { Team } from '../db/types'
 import { ApiError } from '../errorHandlerMiddleware'
+
+import { PrismaClient, Team } from '@prisma/client'
+const prisma = new PrismaClient()
 
 type FindOneTeamQuery = {
 	id: string
 }
-export default function findOneTeamEndpointHandler(
+async function findOneTeamEndpointHandler(
 	req: Request<FindOneTeamQuery>,
 	res: Response<Team>
 ) {
 	const teamId = req.params.id
-	const foundTeam = db.teams.find((team) => team.id === teamId)
+	const foundTeam = await prisma.team.findUnique({ where: { id: teamId } })
 	if(!foundTeam) {
 		throw new ApiError(`Team with Id ${teamId} not found`, 404)
 	}
-	const team = plainToInstance(Team, foundTeam)
-	res.json(team)
+
+	res.json(foundTeam)
 }
+
+export default asyncHandler(findOneTeamEndpointHandler)
