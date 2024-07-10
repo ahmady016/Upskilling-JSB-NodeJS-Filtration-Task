@@ -6,11 +6,17 @@
 	"author": "Ahmed Hamdy",
 	"license": "ISC",
 	"description": "This task not related to any real project it just for test your skills to be able to help you in our 'JSB' program",
+	"prisma": {
+		"seed": "tsx ./src/prisma/seed.ts"
+	},
 	"scripts": {
 		"prebuild": "rm -rf ./dist",
 		"build": "tsc",
 		"start": "npm run build && node ./dist/index.js",
-		"dev": "tsx watch ./src/index.ts"
+		"dev": "tsx watch ./src/index.ts",
+		"prisma:clean": "rm -rf ./src/prisma/db",
+		"prisma:push": "npx prisma db push --schema=./src/prisma/schema.prisma",
+		"prisma:restart": "npm run prisma:clean && npm run prisma:push && npx prisma db seed"
 	},
 	"dependencies": {
 		"express": "^4.19.2",
