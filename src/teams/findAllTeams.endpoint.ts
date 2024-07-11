@@ -1,14 +1,39 @@
 import { Request, Response } from 'express'
 import asyncHandler from 'express-async-handler'
+import { plainToInstance, Transform } from 'class-transformer'
+import { IsNumber, IsOptional, Max, Min } from 'class-validator'
 
 import { PrismaClient, Team } from '@prisma/client'
 const prisma = new PrismaClient()
 
+export class PageQueryInput {
+	@Transform(({ value }) => Number(value))
+	@IsNumber({ allowNaN: false, allowInfinity: false })
+	@Min(1)
+	@IsOptional()
+	pageSize?: number = 10
+
+	@Transform(({ value }) => Number(value))
+	@IsNumber({ allowNaN: false, allowInfinity: false })
+	@Min(1)
+	@Max(100)
+	@IsOptional()
+	pageNumber?: number = 1
+}
 async function findAllTeamsEndpointHandler(
-	_: Request,
+	req: Request<unknown, unknown, unknown, PageQueryInput>,
 	res: Response<Team[]>
 ) {
-	const teams = await prisma.team.findMany()
+	let teams:Team[]
+	if(req.query.pageNumber && req.query.pageSize) {
+		const { pageNumber, pageSize } = plainToInstance(PageQueryInput, req.query)
+		teams = await prisma.team.findMany({
+			skip: (pageNumber - 1) * pageSize,
+			take: pageSize,
+		})
+	} else {
+		teams = await prisma.team.findMany()
+	}
 	res.json(teams)
 }
 
