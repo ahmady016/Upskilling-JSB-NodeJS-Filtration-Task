@@ -2,9 +2,9 @@ import { Request, Response } from 'express'
 import asyncHandler from 'express-async-handler'
 import { plainToInstance, Transform } from 'class-transformer'
 import { IsNumber, IsOptional, Max, Min } from 'class-validator'
+import { Team } from '@prisma/client'
 
-import { PrismaClient, Team } from '@prisma/client'
-const prisma = new PrismaClient()
+import prisma from '../prisma'
 
 export class PageQueryInput {
 	@Transform(({ value }) => Number(value))

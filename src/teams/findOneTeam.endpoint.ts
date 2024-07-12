@@ -1,10 +1,9 @@
 import { Request, Response } from 'express'
 import asyncHandler from 'express-async-handler'
+import { Team } from '@prisma/client'
 
 import { ApiError } from '../errorHandlerMiddleware'
-
-import { PrismaClient, Team } from '@prisma/client'
-const prisma = new PrismaClient()
+import prisma from '../prisma'
 
 type FindOneTeamQuery = {
 	id: string

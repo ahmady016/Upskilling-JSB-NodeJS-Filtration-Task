@@ -2,11 +2,10 @@ import { Request, Response } from 'express'
 import asyncHandler from 'express-async-handler'
 import { plainToInstance } from 'class-transformer'
 import { IsNotEmpty, IsOptional, Length, validate } from 'class-validator'
+import { Team } from '@prisma/client'
 
 import { ApiError } from '../errorHandlerMiddleware'
-
-import { PrismaClient, Team } from '@prisma/client'
-const prisma = new PrismaClient()
+import prisma from '../prisma'
 
 class UpdateTeamInput {
     @IsNotEmpty({ message: 'Name is required' })
