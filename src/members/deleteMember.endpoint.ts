@@ -2,9 +2,7 @@ import { Request, Response } from 'express'
 import asyncHandler from 'express-async-handler'
 
 import { ApiError } from '../errorHandlerMiddleware'
-
-import { PrismaClient } from '@prisma/client'
-const prisma = new PrismaClient()
+import prisma from '../prisma'
 
 async function deleteMemberEndpointHandler(
     req: Request<{ id: string }>,

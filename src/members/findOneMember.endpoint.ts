@@ -1,10 +1,9 @@
 import { Request, Response } from 'express'
+import { TeamMember } from '@prisma/client'
 import asyncHandler from 'express-async-handler'
 
 import { ApiError } from '../errorHandlerMiddleware'
-
-import { PrismaClient, TeamMember } from '@prisma/client'
-const prisma = new PrismaClient()
+import prisma from '../prisma'
 
 type FindOneMemberQuery = {
 	id: string
