@@ -27,6 +27,11 @@ async function updateMemberEndpointHandler(
     if(!foundTask) {
         throw new ApiError(`Task with Id ${taskId} not found`, 404)
     }
+    // check if team member exists and throw error if not
+    const foundMember = await prisma.team.findUnique({ where: { id: updatedTaskInput.assignedTo } })
+    if(!foundMember) {
+        throw new ApiError(`Team Member with Id ${updatedTaskInput.assignedTo} Not Found`, 404)
+    }
 
     // Update task using prisma
     const updatedTask = await prisma.task.update({

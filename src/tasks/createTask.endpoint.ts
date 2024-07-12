@@ -49,6 +49,12 @@ async function createTaskEndpointHandler(
         throw new ApiError('Validation failed', 400, errors)
     }
 
+    // check if team member exists and throw error if not
+    const foundMember = await prisma.team.findUnique({ where: { id: createdTaskInput.assignedTo } })
+    if(!foundMember) {
+        throw new ApiError(`Team Member with Id ${createdTaskInput.assignedTo} Not Found`, 404)
+    }
+
     // Add to database using prisma
     const createdTask = await prisma.task.create({ data: createdTaskInput })
 

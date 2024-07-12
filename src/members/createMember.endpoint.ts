@@ -41,6 +41,17 @@ async function createMemberEndpointHandler(
         throw new ApiError('Validation Failed', 400, errors)
     }
 
+    // check if email already exists and throw error if found
+    const foundTeamMember = await prisma.teamMember.findUnique({ where: { email: createdTeamMemberInput.email } })
+    if(foundTeamMember) {
+        throw new ApiError(`TeamMember with email: ${createdTeamMemberInput.email} already exists`, 409)
+    }
+    // check if team exists and throw error if not
+    const foundTeam = await prisma.team.findUnique({ where: { id: createdTeamMemberInput.teamId } })
+    if(!foundTeam) {
+        throw new ApiError(`Team with Id ${createdTeamMemberInput.teamId} Not Found`, 404)
+    }
+
     // Add to database using prisma
     const createdTeamMember = await prisma.teamMember.create({ data: createdTeamMemberInput })
 

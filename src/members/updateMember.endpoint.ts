@@ -27,6 +27,11 @@ async function updateMemberEndpointHandler(
     if(!foundMember) {
         throw new ApiError(`TeamMember with Id ${teamMemberId} not found`, 404)
     }
+    // check for team exists and throw error if not
+    const foundTeam = await prisma.team.findUnique({ where: { id: updatedTeamMemberInput.teamId } })
+    if(!foundTeam) {
+        throw new ApiError(`Team with Id ${updatedTeamMemberInput.teamId} not found`, 404)
+    }
 
     // Update team member using prisma
     const updatedTeamMember = await prisma.teamMember.update({
