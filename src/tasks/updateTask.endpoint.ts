@@ -1,13 +1,12 @@
 import { Request, Response } from 'express'
-import asyncHandler from 'express-async-handler'
 import { plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
+import { Task } from '@prisma/client'
+import asyncHandler from 'express-async-handler'
 
-import { ApiError } from '../errorHandlerMiddleware'
 import { CreateOrUpdateTaskInput } from './createTask.endpoint'
-
-import { PrismaClient, Task } from '@prisma/client'
-const prisma = new PrismaClient()
+import { ApiError } from '../errorHandlerMiddleware'
+import prisma from '../prisma'
 
 async function updateMemberEndpointHandler(
     req: Request<{ id: string }, unknown, CreateOrUpdateTaskInput>,

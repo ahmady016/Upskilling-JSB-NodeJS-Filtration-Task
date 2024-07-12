@@ -1,13 +1,12 @@
 import { Request, Response } from 'express'
 import { plainToInstance } from 'class-transformer'
 import { IsDateString, IsEnum, IsNotEmpty, IsOptional, Length, validate } from 'class-validator'
+import { Task } from '@prisma/client'
 import asyncHandler from 'express-async-handler'
 
 import { TaskStatus } from './../db/types'
 import { ApiError } from '../errorHandlerMiddleware'
-
-import { PrismaClient, Task } from '@prisma/client'
-const prisma = new PrismaClient()
+import prisma from '../prisma'
 
 export class CreateOrUpdateTaskInput {
     @IsNotEmpty({ message: 'Title is required' })
