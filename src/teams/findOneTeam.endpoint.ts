@@ -13,7 +13,14 @@ async function findOneTeamEndpointHandler(
 	res: Response<Team>
 ) {
 	const teamId = req.params.id
-	const foundTeam = await prisma.team.findUnique({ where: { id: teamId } })
+	const foundTeam = await prisma.team.findUnique({
+		where: { id: teamId },
+		include: {
+			members: {
+				select: { name: true, email: true, birthDate: true, gender: true }
+			}
+		}
+	})
 	if(!foundTeam) {
 		throw new ApiError(`Team with Id ${teamId} not found`, 404)
 	}

@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 import { plainToInstance } from 'class-transformer'
-import { TeamMember } from '@prisma/client'
+import { Prisma, TeamMember } from '@prisma/client'
 import asyncHandler from 'express-async-handler'
 
 import { PageQueryInput } from '../teams/findAllTeams.endpoint'
@@ -10,16 +10,27 @@ async function findAllMembersEndpointHandler(
     req: Request<unknown, unknown, unknown, PageQueryInput>,
     res: Response<TeamMember[]>
 ) {
-	let teamMembers:TeamMember[]
+	let queryOptions: Prisma.TeamMemberFindManyArgs = {
+		orderBy: {
+			name: 'asc'
+		}
+	}
+
 	if(req.query.pageNumber && req.query.pageSize) {
 		const { pageNumber, pageSize } = plainToInstance(PageQueryInput, req.query)
-		teamMembers = await prisma.teamMember.findMany({
+		queryOptions = {
 			skip: (pageNumber - 1) * pageSize,
 			take: pageSize,
-		})
-	} else {
-		teamMembers = await prisma.teamMember.findMany()
+			include: {
+				tasks: {
+					select: { title: true, status: true, dueDate: true }
+				}
+			},
+			...queryOptions,
+		}
 	}
+
+	const teamMembers = await prisma.teamMember.findMany(queryOptions)
 	res.json(teamMembers)
 }
 

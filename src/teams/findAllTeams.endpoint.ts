@@ -2,7 +2,7 @@ import { Request, Response } from 'express'
 import asyncHandler from 'express-async-handler'
 import { plainToInstance, Transform } from 'class-transformer'
 import { IsNumber, IsOptional, Max, Min } from 'class-validator'
-import { Team } from '@prisma/client'
+import { Prisma, Team } from '@prisma/client'
 
 import prisma from '../prisma'
 
@@ -24,16 +24,27 @@ async function findAllTeamsEndpointHandler(
 	req: Request<unknown, unknown, unknown, PageQueryInput>,
 	res: Response<Team[]>
 ) {
-	let teams:Team[]
+	let queryOptions: Prisma.TeamFindManyArgs = {
+		orderBy: {
+			name: 'asc'
+		}
+	}
+
 	if(req.query.pageNumber && req.query.pageSize) {
 		const { pageNumber, pageSize } = plainToInstance(PageQueryInput, req.query)
-		teams = await prisma.team.findMany({
+		queryOptions = {
 			skip: (pageNumber - 1) * pageSize,
 			take: pageSize,
-		})
-	} else {
-		teams = await prisma.team.findMany()
+			include: {
+				members: {
+					select: { name: true, email: true }
+				}
+			},
+			...queryOptions,
+		}
 	}
+
+	const teams = await prisma.team.findMany(queryOptions as Prisma.TeamFindManyArgs)
 	res.json(teams)
 }
 

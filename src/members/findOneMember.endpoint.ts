@@ -13,7 +13,14 @@ async function findOneMemberEndpointHandler(
     res: Response<TeamMember>
 ) {
     const memberId = req.params.id
-    const foundMember = await prisma.teamMember.findUnique({ where: { id: memberId } })
+    const foundMember = await prisma.teamMember.findUnique({
+        where: { id: memberId },
+        include: {
+            tasks: {
+                select: { title: true, description: true, status: true, dueDate: true }
+            }
+        }
+    })
     if(!foundMember) {
         throw new ApiError(`TeamMember with Id ${memberId} not found`, 404)
     }
