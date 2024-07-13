@@ -42,7 +42,7 @@ export default function errorHandlerMiddleware(
 		name: errorName,
 		message: error.message,
 		statusCode: statusCode,
-		validationErrors: error.validationErrors.length > 0 ? mapValidationErrors(error.validationErrors) : null,
+		validationErrors: error.validationErrors?.length > 0 ? mapValidationErrors(error.validationErrors) : null,
 		endpoint: req.url,
 	}
 	console.error(response)
