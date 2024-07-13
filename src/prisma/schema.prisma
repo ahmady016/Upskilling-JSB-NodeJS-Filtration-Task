@@ -1,8 +1,6 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearch"]
 }
 
 datasource db {
@@ -14,22 +12,26 @@ model Team {
   id          String       @id @default(uuid())
   name        String
   description String?
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
+  createdAt   DateTime     @default(now()) @map("created_at")
+  updatedAt   DateTime     @updatedAt @map("updated_at")
   members     TeamMember[]
+
+  @@map("teams")
 }
 
 model TeamMember {
   id        String   @id @default(uuid())
   name      String
   email     String   @unique
-  birthDate DateTime
+  birthDate DateTime @map("birth_date")
   gender    String   @default("MALE")
-  teamId    String
+  teamId    String   @map("team_id")
   team      Team     @relation(fields: [teamId], references: [id], onDelete: NoAction, onUpdate: Cascade)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
   tasks     Task[]
+
+  @@map("teams_members")
 }
 
 model Task {
@@ -37,11 +39,13 @@ model Task {
   title       String
   description String
   status      String     @default("OPEN")
-  assignedTo  String
+  dueDate     DateTime   @map("due_date")
+  startDate   DateTime?  @map("start_date")
+  endDate     DateTime?  @map("end_date")
+  createdAt   DateTime   @default(now()) @map("created_at")
+  updatedAt   DateTime   @updatedAt @map("updated_at")
+  assignedTo  String     @map("assigned_to")
   member      TeamMember @relation(fields: [assignedTo], references: [id], onDelete: NoAction, onUpdate: Cascade)
-  dueDate     DateTime
-  startDate   DateTime?
-  endDate     DateTime?
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
+
+  @@map("tasks")
 }
