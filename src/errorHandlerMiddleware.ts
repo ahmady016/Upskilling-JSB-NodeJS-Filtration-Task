@@ -17,6 +17,19 @@ export class ApiError extends Error {
 		this.validationErrors = validationErrors || []
 	}
 }
+type ApiErrorResponse = {
+	name: string
+	message: string
+	statusCode: number
+	validationErrors: Record<string, string[]>
+	endpoint: string
+}
+function mapValidationErrors(errors: ValidationError[]): Record<string, string[]> {
+	return errors.reduce((acc, error) => {
+		acc[error.property] = Object.values(error.constraints)
+		return acc
+	}, {} as Record<string, string[]>)
+}
 export default function errorHandlerMiddleware(
 	error: ApiError,
 	req: Request,
@@ -25,11 +38,11 @@ export default function errorHandlerMiddleware(
 ) {
 	const statusCode = error.statusCode ? error.statusCode : 500
 	const errorName = error.name || 'ApiError'
-	const response: ApiError = {
+	const response: ApiErrorResponse = {
 		name: errorName,
 		message: error.message,
 		statusCode: statusCode,
-		validationErrors: error.validationErrors,
+		validationErrors: error.validationErrors.length > 0 ? mapValidationErrors(error.validationErrors) : null,
 		endpoint: req.url,
 	}
 	console.error(response)
